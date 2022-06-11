@@ -26,6 +26,7 @@ pub enum Instruction {
     
     NOT, AND, OR, XOR,
 
+    // cpuid will be implemented later
     CALL, RET, END, CPUID, INT
 }
 
