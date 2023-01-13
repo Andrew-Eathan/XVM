@@ -1,12 +1,42 @@
+extern crate sdl2;
+
 pub mod processor;
 use processor::Instruction;
 use std::io::{self, Write};
+use sdl2::Sdl;
 static DEBUG: bool = false;
 
-fn main() {
+#[macro_export]
+macro_rules! printdbg {
+    () => {
+        println!();
+    };
+    ( $($arg:tt)* ) => {
+        println!($arg)
+    };
+}
+
+pub fn main() {
     use std::time::Instant;
     let start = Instant::now();
     if DEBUG { println!("Hello, world!"); }
+
+    let sdl_ctx: Sdl = match sdl2::init() {
+        Ok(ctx) => ctx,
+        Err(err) => {
+            panic!("ERROR: Failed to initialise SDL screen! Check if you have the SDL2.dll file in the same place as your executable. ({:?})", err)
+            
+        },
+    };
+
+
+    let sdl_video_subsys = sdl_ctx.video();
+    let window = sdl_video_subsys.expect("uh oh")
+        .window("XPC Screen", 800, 600)
+        .position_centered()
+        .opengl()
+        .build()
+        .map_err(|e| e.to_string());
 
     let mut cpu = processor::Processor::new();
     cpu.m_status = true;
@@ -79,4 +109,19 @@ fn main() {
 
     let elapsed = start.elapsed();
     println!("\nexecution completed in {}ms", elapsed.as_millis());
+
+    /*'running: loop {
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => {
+                    break 'running;
+                }
+                _ => {}
+            }
+        }
+    }*/
 }
