@@ -1,7 +1,6 @@
 type IntHandler = fn(&mut Processor, u8);
 use std::collections::HashMap;
 use crate::DEBUG;
-use std::io;
 
 #[allow(dead_code)]
 pub struct Processor {

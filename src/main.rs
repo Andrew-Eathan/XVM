@@ -1,8 +1,8 @@
 pub mod processor;
+pub mod screen;
+
 use processor::Instruction;
-use std::io::{self, stdout, Write};
-use std::thread;
-use std::time::Duration;
+use std::io::{stdout, Write};
 static DEBUG: bool = false;
 
 #[macro_export]
@@ -27,7 +27,7 @@ pub fn main() {
     cpu.attach_int_handler(0, |cpu: &mut processor::Processor, _int: u8| {
         let chr: char = cpu.m_registers[15] as u8 as char;
         print!("{}", chr);
-        io::stdout().flush().unwrap();
+        stdout().flush().unwrap();
     });
 
     cpu.push_byte((69420 & 0x0000FF) as u8);
