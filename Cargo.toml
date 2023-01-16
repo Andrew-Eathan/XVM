@@ -5,4 +5,9 @@ edition = "2021"
 authors = ["andreweathan <mariluu69420@gmail.com>"]
 
 [dependencies]
-sdl2 = "0.35.2"
+crossterm = "0.25.0"
+pancurses = "0.17.0"
+tui = "0.19.0"
+
+# [dependencies]
+# sdl2 = "0.35.2"

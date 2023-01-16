@@ -1,9 +1,8 @@
-extern crate sdl2;
-
 pub mod processor;
 use processor::Instruction;
-use std::io::{self, Write};
-use sdl2::Sdl;
+use std::io::{self, stdout, Write};
+use std::thread;
+use std::time::Duration;
 static DEBUG: bool = false;
 
 #[macro_export]
@@ -11,32 +10,16 @@ macro_rules! printdbg {
     () => {
         println!();
     };
-    ( $($arg:tt)* ) => {
-        println!($arg)
+    ( $($arg:expr),* ) => {
+        if DEBUG {
+            println!($($arg),*);
+        }
     };
 }
 
 pub fn main() {
     use std::time::Instant;
     let start = Instant::now();
-    if DEBUG { println!("Hello, world!"); }
-
-    let sdl_ctx: Sdl = match sdl2::init() {
-        Ok(ctx) => ctx,
-        Err(err) => {
-            panic!("ERROR: Failed to initialise SDL screen! Check if you have the SDL2.dll file in the same place as your executable. ({:?})", err)
-            
-        },
-    };
-
-
-    let sdl_video_subsys = sdl_ctx.video();
-    let window = sdl_video_subsys.expect("uh oh")
-        .window("XPC Screen", 800, 600)
-        .position_centered()
-        .opengl()
-        .build()
-        .map_err(|e| e.to_string());
 
     let mut cpu = processor::Processor::new();
     cpu.m_status = true;
@@ -46,6 +29,12 @@ pub fn main() {
         print!("{}", chr);
         io::stdout().flush().unwrap();
     });
+
+    cpu.push_byte((69420 & 0x0000FF) as u8);
+    cpu.push_byte(((69420 & 0x00FF00) >> 8) as u8);
+    cpu.push_byte(((69420 & 0xFF0000) >> 16) as u8);
+
+    println!("{}", cpu.get_bytes(3));
 
     // load byte 4 in register 0
     cpu.push_byte(Instruction::LOAD1B as u8);
@@ -107,8 +96,10 @@ pub fn main() {
         cpu.dump_stack();
     }
 
+
+
     let elapsed = start.elapsed();
-    println!("\nexecution completed in {}ms", elapsed.as_millis());
+    println!("Execution completed in {}ms!\n", elapsed.as_millis());
 
     /*'running: loop {
         for event in event_pump.poll_iter() {

@@ -1,6 +1,7 @@
 type IntHandler = fn(&mut Processor, u8);
 use std::collections::HashMap;
 use crate::DEBUG;
+use std::io;
 
 #[allow(dead_code)]
 pub struct Processor {
@@ -255,6 +256,19 @@ impl Processor {
         let mem = self.m_memory[self.m_program_counter as usize];
         self.m_program_counter += 1;
         mem
+    }
+    pub fn get_bytes(&mut self, mut bytecount: u8) -> u64 {
+        if bytecount > 8 {
+            bytecount = 8;
+        }
+
+        let mut num: u64 = 0;
+        for x in 0 .. bytecount {
+            let byte: u64 = self.get_byte() as u64;
+            num |= byte << (x * 8);
+        }
+
+        num
     }
     pub fn new() -> Processor {
         Processor {
