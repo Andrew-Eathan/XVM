@@ -21,10 +21,13 @@ pub fn main() {
     use std::time::Instant;
     let start = Instant::now();
 
-    let mut cpu = processor::Processor::new();
+    let mut cpu = processor::XCPU::new();
     cpu.m_status = true;
 
-    cpu.attach_int_handler(0, |cpu: &mut processor::Processor, _int: u8| {
+	let mut screen = screen::XTerminal::new();
+    screen.initialise(60, 20, 0xb8000);
+
+    cpu.attach_int_handler(0, |cpu: &mut processor::XCPU, _int: u8| {
         let chr: char = cpu.m_registers[15] as u8 as char;
         print!("{}", chr);
         stdout().flush().unwrap();
@@ -95,8 +98,6 @@ pub fn main() {
         cpu.dump_registers();
         cpu.dump_stack();
     }
-
-
 
     let elapsed = start.elapsed();
     println!("Execution completed in {}ms!\n", elapsed.as_millis());

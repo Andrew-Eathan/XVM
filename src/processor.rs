@@ -1,9 +1,9 @@
-type IntHandler = fn(&mut Processor, u8);
+type IntHandler = fn(&mut XCPU, u8);
 use std::collections::HashMap;
 use crate::DEBUG;
 
 #[allow(dead_code)]
-pub struct Processor {
+pub struct XCPU {
     pub m_memory: Vec<u8>,
     pub m_program_counter: u64,
     pub m_status: bool,
@@ -40,7 +40,7 @@ pub enum Signal {
     OVERFLOWED
 }
 
-impl Processor {
+impl XCPU {
     pub fn process(&mut self) {
         if self.m_program_counter as usize >= self.m_memory.len() {
             self.emit_signal(Signal::DEADEND);
@@ -269,8 +269,8 @@ impl Processor {
 
         num
     }
-    pub fn new() -> Processor {
-        Processor {
+    pub fn new() -> XCPU {
+        XCPU {
             m_memory: Vec::new(),
             m_program_counter: 0,
             m_status: false,
